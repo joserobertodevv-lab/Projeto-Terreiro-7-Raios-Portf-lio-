@@ -1,0 +1,66 @@
+/* bloco de pontos */
+
+.blocopontos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px 20px;
+  background-color: #FFF7E6;
+  font-family: 'Kanit', sans-serif;
+}
+
+section .primario,
+section .secundario,
+section .terciario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  max-width: 300px;
+  min-width: 250px;
+}
+
+section .content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section .content:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+section .content h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #78350F;
+}
+
+section .content p {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+section .content a {
+  display: inline-block;
+  color: #8B3A0C;
+  background-color: #F5EDE4;
+  border: 1px solid #D9B99B;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+section .content a:hover {
+  background-color: #8B3A0C;
+  color: white;
+  border-color: #8B3A0C;
+}

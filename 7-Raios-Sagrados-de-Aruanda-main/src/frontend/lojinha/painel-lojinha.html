@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Painel Lojinha - Gerenciamento de Estoque</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/lojinha/vendas-lojinha.html">Vendas</a>
+            <a href="/lojinha/painel-lojinha.html">Painel</a>
+            <a href="/lojinha/dashboard-lojinha.html">Dashboard</a>
+            <a href="/lojinha/usuarios-lojinha.html">Usuários</a>
+        </nav>
+
+        <a href="#" class="btn-login" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </header>
+
+    <section class="dashboard-container">
+        <h1 style="text-align: center; color: #78350F; margin-bottom: 30px;">Gerenciamento de Estoque</h1>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn btn-marrom" onclick="mostrarFormularioProduto()">
+                <i class="fas fa-plus"></i> Adicionar Produto
+            </button>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <div id="formulario-container" style="display: none; max-width: 600px; margin: 0 auto 30px;">
+            <div class="form-container">
+                <h2 id="form-titulo">Novo Produto</h2>
+                <form id="produto-form">
+                    <input type="hidden" id="produto-id">
+                    
+                    <div class="form-group">
+                        <label for="produto-nome">Nome do Produto</label>
+                        <input type="text" id="produto-nome" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="produto-descricao">Descrição</label>
+                        <textarea id="produto-descricao" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="produto-preco">Preço (R$)</label>
+                        <input type="number" id="produto-preco" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="produto-estoque">Estoque</label>
+                        <input type="number" id="produto-estoque" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="produto-imagem">URL da Imagem</label>
+                        <input type="url" id="produto-imagem">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="produto-ativo" checked> Produto Ativo
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-marrom" style="flex: 1;">Salvar</button>
+                        <button type="button" class="btn btn-transparente" onclick="ocultarFormularioProduto()" style="flex: 1;">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="produtos-table">
+                    <!-- Produtos serão carregados aqui -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/painel-lojinha.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar autenticação
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            const isAdminLojinha = await verificarAdminLojinha();
+            if (!estaAutenticado || !isAdminLojinha) {
+                window.location.href = '/lojinha/login-lojinha.html';
+            } else {
+                carregarProdutos();
+            }
+        });
+
+        function mostrarFormularioProduto() {
+            document.getElementById('formulario-container').style.display = 'block';
+            document.getElementById('form-titulo').textContent = 'Novo Produto';
+            document.getElementById('produto-form').reset();
+            document.getElementById('produto-id').value = '';
+            document.getElementById('produto-ativo').checked = true;
+        }
+
+        function ocultarFormularioProduto() {
+            document.getElementById('formulario-container').style.display = 'none';
+        }
+
+        async function sair() {
+            try {
+                await fazerLogout();
+                window.location.href = '/lojinha/login-lojinha.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+            }
+        }
+
+        // Formulário de produto
+        document.getElementById('produto-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await salvarProduto();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Usuários Lojinha</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/lojinha/vendas-lojinha.html">Vendas</a>
+            <a href="/lojinha/painel-lojinha.html">Painel</a>
+            <a href="/lojinha/dashboard-lojinha.html">Dashboard</a>
+            <a href="/lojinha/usuarios-lojinha.html">Usuários</a>
+        </nav>
+
+        <a href="#" class="btn-login" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </header>
+
+    <section class="dashboard-container">
+        <h1 style="text-align: center; color: #78350F; margin-bottom: 30px;">Gerenciamento de Usuários</h1>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usuarios-table">
+                    <!-- Usuários serão carregados aqui -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/usuarios-lojinha.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar autenticação
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            const isAdminLojinha = await verificarAdminLojinha();
+            if (!estaAutenticado || !isAdminLojinha) {
+                window.location.href = '/lojinha/login-lojinha.html';
+            } else {
+                carregarUsuarios();
+            }
+        });
+
+        async function sair() {
+            try {
+                await fazerLogout();
+                window.location.href = '/lojinha/login-lojinha.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Dashboard Lojinha - Histórico e Contas</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/lojinha/vendas-lojinha.html">Vendas</a>
+            <a href="/lojinha/painel-lojinha.html">Painel</a>
+            <a href="/lojinha/dashboard-lojinha.html">Dashboard</a>
+            <a href="/lojinha/usuarios-lojinha.html">Usuários</a>
+        </nav>
+        <a href="#" class="btn-login" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </header>
+
+    <section class="dashboard-container">
+        <h1 style="text-align: center; color: #78350F; margin-bottom: 30px;">Dashboard - Histórico e Contas</h1>
+        
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total de Vendas (Mês)</h3>
+                <div class="stat-value" id="total-vendas-mes">R$ 0,00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total em Contas</h3>
+                <div class="stat-value" id="total-contas">R$ 0,00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Vendas Hoje</h3>
+                <div class="stat-value" id="vendas-hoje">0</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <h2 style="color: #78350F; margin-bottom: 20px;">Contas dos Filhos de Santo</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Valor em Conta</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contas-table">
+                        <!-- Contas serão carregadas aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <h2 style="color: #78350F; margin-bottom: 20px;">Histórico de Vendas</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>Forma de Pagamento</th>
+                            <th>Filho (se anotado)</th>
+                            <th>Vendedor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendas-table">
+                        <!-- Vendas serão carregadas aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal para abater valor -->
+    <div id="modal-abater" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background-color: #fff; padding: 30px; border-radius: 10px; max-width: 400px; width: 90%;">
+            <h2 style="color: #78350F; margin-bottom: 20px;">Abater Valor</h2>
+            <div id="alert-container"></div>
+            <form id="abater-form">
+                <input type="hidden" id="conta-filho-id">
+                <div class="form-group">
+                    <label for="valor-abater">Valor a Abater (R$)</label>
+                    <input type="number" id="valor-abater" step="0.01" min="0.01" required>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-marrom" style="flex: 1;">Confirmar</button>
+                    <button type="button" class="btn btn-transparente" onclick="fecharModalAbater()" style="flex: 1;">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/dashboard-lojinha.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar autenticação
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            const isAdminLojinha = await verificarAdminLojinha();
+            if (!estaAutenticado || !isAdminLojinha) {
+                window.location.href = '/lojinha/login-lojinha.html';
+            } else {
+                carregarDashboard();
+            }
+        });
+
+        async function sair() {
+            try {
+                await fazerLogout();
+                window.location.href = '/lojinha/login-lojinha.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+            }
+        }
+
+        function fecharModalAbater() {
+            document.getElementById('modal-abater').style.display = 'none';
+            document.getElementById('abater-form').reset();
+        }
+
+        document.getElementById('abater-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await abaterValor();
+        });
+    </script>
+</body>
+
+</html>
