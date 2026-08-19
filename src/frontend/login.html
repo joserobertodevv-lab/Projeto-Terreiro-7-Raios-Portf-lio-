@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Login - Casa de Caridade 7 Raios Sagrados de Aruanda</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/">Início</a>
+            <a href="/historia">História</a>
+            <a href="/calendario">Calendário</a>
+            <a href="/pontos-linhas">Pontos das Linhas</a>
+            <a href="/pontos-orixas">Pontos dos Orixás</a>
+            <a href="/palestras">Palestras</a>
+        </nav>
+
+        <a href="/login" class="btn-login" id="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </header>
+
+    <section class="login">
+        <div class="login-box">
+            <div class="login-icon">
+                <i class="fas fa-arrow-right-to-bracket"></i>
+            </div>
+            <h2>Área dos Filhos da Casa</h2>
+            <p class="subtitle">Faça login para acessar a área interna do terreiro</p>
+
+            <div id="alert-container"></div>
+
+            <form id="login-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+
+                <label for="password">Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Sua senha" required>
+                    <i class="fas fa-eye" id="toggle-password" title="Mostrar/ocultar senha"></i>
+                </div>
+
+                <button type="submit">
+                    <i class="fas fa-right-to-bracket"></i> Entrar
+                </button>
+            </form>
+
+            <div class="links">
+                <p>Esqueceu sua senha?</p>
+                <p>Não tem acesso? Entre em contato com os dirigentes</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar se já está logado (e permitido)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            if (estaAutenticado) {
+                const permitido = await verificarFilhoSanto();
+                if (!permitido) {
+                    await fazerLogout();
+                    return;
+                }
+                window.location.href = '/interno/area-interna';
+            }
+        });
+
+        // Formulário de login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const alertContainer = document.getElementById('alert-container');
+            
+            try {
+                await fazerLogin(email, password);
+                const permitido = await verificarFilhoSanto();
+                if (!permitido) {
+                    alertContainer.innerHTML = '<div class="alert alert-error">Você não tem permissão para acessar a área interna.</div>';
+                    await fazerLogout();
+                    return;
+                }
+                alertContainer.innerHTML = '<div class="alert alert-success">Login realizado com sucesso! Redirecionando...</div>';
+                setTimeout(() => window.location.href = '/interno/area-interna', 600);
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Erro ao fazer login: ${error.message}</div>`;
+            }
+        });
+
+        // Mostrar/ocultar senha
+        document.getElementById('toggle-password').addEventListener('click', () => {
+            const input = document.getElementById('password');
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            document.getElementById('toggle-password').className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+        });
+    </script>
+</body>
+
+</html>

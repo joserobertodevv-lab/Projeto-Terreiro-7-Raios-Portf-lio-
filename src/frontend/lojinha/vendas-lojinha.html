@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Vendas - Lojinha</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/lojinha/vendas-lojinha.html">Vendas</a>
+            <a href="/lojinha/painel-lojinha.html">Painel</a>
+            <a href="/lojinha/dashboard-lojinha.html">Dashboard</a>
+            <a href="/lojinha/usuarios-lojinha.html">Usuários</a>
+        </nav>
+
+        <a href="#" class="btn-login" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </header>
+
+    <section class="carrinho-container">
+        <h1 style="text-align: center; color: #78350F; margin-bottom: 30px;">Área de Vendas</h1>
+        
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Área de Produtos -->
+            <div>
+                <h2 style="color: #78350F; margin-bottom: 20px;">Produtos Disponíveis</h2>
+                <div id="produtos-container" class="produtos-grid">
+                    <!-- Produtos serão carregados aqui -->
+                </div>
+            </div>
+
+            <!-- Carrinho -->
+            <div>
+                <div style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 20px;">
+                    <h2 style="color: #78350F; margin-bottom: 20px;">Carrinho</h2>
+                    <div id="carrinho-container">
+                        <p style="text-align: center; color: #666;">Carrinho vazio</p>
+                    </div>
+                    <div id="carrinho-total" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ffe5b4;">
+                        <p style="font-size: 20px; font-weight: 700; color: #78350F;">Total: R$ 0,00</p>
+                    </div>
+                    <button class="btn btn-marrom" style="width: 100%; margin-top: 20px;" onclick="finalizarVenda()" disabled id="btn-finalizar">
+                        Finalizar Venda
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Finalização -->
+        <div id="modal-finalizar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+            <div style="background-color: #fff; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%;">
+                <h2 style="color: #78350F; margin-bottom: 20px;">Finalizar Venda</h2>
+                <div id="alert-container"></div>
+                <form id="finalizar-form">
+                    <div class="form-group">
+                        <label for="forma-pagamento">Forma de Pagamento</label>
+                        <select id="forma-pagamento" required>
+                            <option value="">Selecione...</option>
+                            <option value="pix">PIX</option>
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="anotar">Anotar na Conta</option>
+                        </select>
+                    </div>
+                    
+                    <div id="filho-container" style="display: none;">
+                        <div class="form-group">
+                            <label for="filho-id">Filho de Santo</label>
+                            <select id="filho-id" required>
+                                <option value="">Selecione o filho...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit" class="btn btn-marrom" style="flex: 1;">Confirmar</button>
+                        <button type="button" class="btn btn-transparente" onclick="fecharModal()" style="flex: 1;">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/vendas-lojinha.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar autenticação
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            const isAdminLojinha = await verificarAdminLojinha();
+            if (!estaAutenticado || !isAdminLojinha) {
+                window.location.href = '/lojinha/login-lojinha.html';
+            } else {
+                carregarProdutos();
+                carregarFilhos();
+            }
+        });
+
+        async function sair() {
+            try {
+                await fazerLogout();
+                window.location.href = '/lojinha/login-lojinha.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+            }
+        }
+
+
+        // Mostrar/ocultar campo de filho quando selecionar "anotar"
+        document.getElementById('forma-pagamento').addEventListener('change', (e) => {
+            const filhoContainer = document.getElementById('filho-container');
+            if (e.target.value === 'anotar') {
+                filhoContainer.style.display = 'block';
+                document.getElementById('filho-id').required = true;
+            } else {
+                filhoContainer.style.display = 'none';
+                document.getElementById('filho-id').required = false;
+            }
+        });
+
+        document.getElementById('finalizar-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await processarVenda();
+        });
+    </script>
+</body>
+
+</html>

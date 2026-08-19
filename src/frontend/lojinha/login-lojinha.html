@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Login Lojinha - Casa de Caridade 7 Raios Sagrados de Aruanda</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/">Início</a>
+        </nav>
+
+        <a href="/login" class="btn-login" id="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </header>
+
+    <section class="form-container">
+        <h2>Login - Lojinha</h2>
+        
+        <div id="alert-container"></div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-marrom" style="width: 100%;">Entrar</button>
+        </form>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar se já está logado
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            const isAdminLojinha = await verificarAdminLojinha();
+            if (estaAutenticado && isAdminLojinha) {
+                window.location.href = '/lojinha/painel-lojinha.html';
+            }
+        });
+
+        // Formulário de login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const alertContainer = document.getElementById('alert-container');
+            
+            try {
+                await fazerLogin(email, password);
+                const isAdminLojinha = await verificarAdminLojinha();
+                if (isAdminLojinha) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Login realizado com sucesso! Redirecionando...</div>';
+                    setTimeout(() => {
+                        window.location.href = '/lojinha/painel-lojinha.html';
+                    }, 1000);
+                } else {
+                    alertContainer.innerHTML = '<div class="alert alert-error">Você não tem permissão para acessar a lojinha.</div>';
+                    await fazerLogout();
+                }
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Erro ao fazer login: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

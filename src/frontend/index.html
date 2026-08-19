@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Casa de Caridade 7 Raios Sagrados de Aruanda</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/">Início</a>
+            <a href="/historia">História</a>
+            <a href="/calendario">Calendário</a>
+            <a href="/pontos-linhas">Pontos das Linhas</a>
+            <a href="/pontos-orixas">Pontos dos Orixás</a>
+            <a href="/palestras">Palestras</a>
+        </nav>
+
+        <a href="/login" class="btn-login" id="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </header>
+
+    <section class="hero">
+        <div class="logo-circular">
+            <img src="/images/logo.png" alt="Logo do Terreiro">
+        </div>
+
+        <h1>Casa de Caridade <br> 7 Raios Sagrados de Aruanda</h1>
+
+        <p>
+            Seja bem-vindo à Casa de Caridade 7 Raios Sagrados de Aruanda!
+            Que a luz, a fé e a proteção dos Orixás e guias te acompanhem. Aqui você encontra informações sobre nossa
+            casa, nosso calendário espiritual e se conecta com uma corrente de amor e caridade.
+            O atendimento é feito por ordem de chegada e tem início às 16h.
+        </p>
+
+        <div class="botoes-hero">
+            <a href="/historia" class="btn btn-marrom">Conheça Nossa História</a>
+            <a href="/calendario" class="btn btn-transparente">Ver Calendário de Giras</a>
+        </div>
+    </section>
+
+    <section class="cards-container">
+        <h2>Explore Nosso Terreiro</h2>
+
+        <div class="cards-grid">
+            <div class="card">
+                <i data-lucide="book-open"></i>
+                <h3>História da Umbanda</h3>
+                <p>Conheça as origens e fundamentos da nossa religião</p>
+                <a href="/historia"><button>Saiba Mais</button></a>
+            </div>
+
+            <div class="card">
+                <i data-lucide="calendar"></i>
+                <h3>Calendário de Giras</h3>
+                <p>Confira os próximos trabalhos e celebrações</p>
+                <a href="/calendario"><button>Ver Calendário</button></a>
+            </div>
+
+            <div class="card">
+                <i data-lucide="music"></i>
+                <h3>Pontos das Linhas</h3>
+                <p>Acesse pontos cantados organizados por linha</p>
+                <a href="/pontos-linhas"><button>Acessar Pontos</button></a>
+            </div>
+
+            <div class="card">
+                <i data-lucide="music"></i>
+                <h3>Pontos dos Orixás</h3>
+                <p>Pontos cantados dedicados aos Orixás</p>
+                <a href="/pontos-orixas"><button>Acessar Pontos</button></a>
+            </div>
+
+            <div class="card">
+                <i data-lucide="video"></i>
+                <h3>Palestras</h3>
+                <p>Assista às nossas palestras e ensinamentos</p>
+                <a href="/palestras"><button>Ver Palestras</button></a>
+            </div>
+
+            <div class="card">
+                <i data-lucide="user"></i>
+                <h3>Área dos Filhos</h3>
+                <p>Acesso exclusivo para filhos da casa</p>
+                <a href="/login"><button>Fazer Login</button></a>
+            </div>
+        </div>
+    </section>
+
+    <div>
+        <div class="informações">
+            <div>
+                <div class="info-terreiro">
+                    <div class="info-content">
+                        <h3>Informações do Terreiro</h3>
+                        <p><strong>Endereço:</strong> Travessa Guine Bissau 6</p>
+                        <p><strong>Telefone:</strong> (11) 99358-7894</p>
+                        <p><strong>Horários de Atendimento:</strong> Sábados às 16h</p>
+                    </div>
+                </div>
+                <footer class="site-footer">
+                    <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!--Scripts-->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

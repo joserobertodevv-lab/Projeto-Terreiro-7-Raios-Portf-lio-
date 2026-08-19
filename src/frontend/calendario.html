@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/calendario.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Calendário - Casa de Caridade 7 Raios Sagrados de Aruanda</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/">Início</a>
+            <a href="/historia">História</a>
+            <a href="/calendario">Calendário</a>
+            <a href="/pontos-linhas">Pontos das Linhas</a>
+            <a href="/pontos-orixas">Pontos dos Orixás</a>
+            <a href="/palestras">Palestras</a>
+        </nav>
+
+        <a href="/login" class="btn-login" id="btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </header>
+
+    <section class="calendario-container">
+        <h1 style="text-align: center; color: #78350F; margin-bottom: 30px;">Calendário de Giras</h1>
+        
+        <div id="eventos-container">
+            <!-- Eventos serão carregados aqui via JavaScript -->
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/calendario.js"></script>
+    <script>
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Carregar eventos ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarEventos();
+        });
+    </script>
+</body>
+
+</html>

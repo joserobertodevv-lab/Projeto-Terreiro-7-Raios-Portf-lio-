@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/area-interna.css">
+    <title>Área Interna - Casa de Caridade 7 Raios Sagrados de Aruanda</title>
+</head>
+
+<body>
+    <header>
+        <a class="titulo-header" href="/">Terreiro de Umbanda</a>
+
+        <div class="menu-hamburguer" id="menu-hamburguer">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <nav class="nav-links" id="nav-links">
+            <a href="/">Início</a>
+            <a href="/interno/area-interna">Área Interna</a>
+            <a href="/interno/pontos-interno">Pontos Internos</a>
+            <a href="/interno/dashboard">Dashboard</a>
+        </nav>
+
+        <a href="#" class="btn-login" id="btn-logout" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <a href="/interno/dashboard-interno" class="card">
+                <i class="fas fa-chart-line"></i>
+                <h2>Dashboard</h2>
+                <p>Painel administrativo</p>
+            </a>
+
+            <a href="" class="card">
+                <i class="fas fa-calendar-alt"></i>
+                <h2>Calendário Interno</h2>
+                <p>Reuniões e atividades</p>
+            </a>
+
+            <a href="/interno/pontos-interno" class="card">
+                <i class="fas fa-file-alt"></i>
+                <h2>Material de Estudo</h2>
+                <p>PDFs e Playlists de pontos</p>
+            </a>
+
+            <a href="/lojinha/login-lojinha.html" class="card">
+                <i class="fas fa-store"></i>
+                <h2>Lojinha</h2>
+                <p>Acessar vendas e conta</p>
+            </a>
+        </div>
+
+        <!-- 📢 AVISOS -->
+        <div class="avisos">
+            <h3>📢 Avisos Recentes</h3>
+            <div id="avisos-lista">Carregando...</div>
+        </div>
+
+        <div class="materiais">
+            <h3><i class="fas fa-book"></i> Material de Estudo</h3>
+            <div class="item">
+                <span>Procedimentos (PDF)</span>
+                <button class="btn">Acessar</button>
+            </div>
+            <div class="item">
+                <span>Como deve agir o cambone (PDF)</span>
+                <button class="btn">Acessar</button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <footer class="site-footer">
+        <p>© 2025 Casa de Caridade 7 Raios Sagrados de Aruanda. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+
+        const menuHamburguer = document.getElementById('menu-hamburguer');
+        const navLinks = document.getElementById('nav-links');
+
+        menuHamburguer.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Verificar autenticação + permissão (filho/admin)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const estaAutenticado = await verificarAutenticacao();
+            const permitido = estaAutenticado ? await verificarFilhoSanto() : false;
+            if (!permitido) {
+                window.location.href = '/login';
+            }
+        });
+
+        // Função de logout
+        async function sair() {
+            try {
+                await fazerLogout();
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+            }
+        }
+    </script>
+
+    <!-- 🔑 SUPABASE + DADOS -->
+    <script type="module">
+        import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+        const supabase = createClient(
+            "https://gozbyannzqgmkiojqdan.supabase.co",
+            "sb_publishable_w2Plgh87SF5cBMcETYawHg_H6Hc6VAM"
+        );
+        // 📢 Avisos
+        async function carregarAvisos() {
+            const { data } = await supabase
+                .from("avisos")
+                .select("*")
+                .order("data", { ascending: false });
+
+            const div = document.getElementById("avisos-lista");
+            div.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                div.innerHTML = "<p>Nenhum aviso.</p>";
+                return;
+            }
+
+            data.forEach(a => {
+                div.innerHTML += `
+            <div class="aviso">
+                <strong>${a.titulo}</strong>
+                <p>${a.descricao}</p>
+                <small>${new Date(a.data).toLocaleDateString("pt-BR")}</small>
+            </div>
+        `;
+            });
+        }
+    </script>
+
+        </body>
+
+</html >
